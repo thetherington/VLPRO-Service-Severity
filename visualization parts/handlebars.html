@@ -1,0 +1,172 @@
+<style>
+    div.outer {
+        width: 100%;
+        overflow: hidden;
+        border: 0.8px outset #6d6d6e;
+        border-radius: 10px;
+        border-bottom: 2px solid black;
+        border-left: 10px solid #878a00;
+        padding-top: 3px;
+        margin-bottom: 4px;
+        text-align:center;
+        background-color: #363636;
+    }
+    div.inner {
+        width:195px;
+        height:95px;
+        text-align:center;
+        float:left;
+        font-size:30px;
+        padding-left: 25px;
+    }
+    div.title_type {
+       -webkit-transform: rotate(-90deg);
+       border: 1px solid #282828;
+       border-radius: 30px;
+       position:relative;
+       overflow: hidden;
+       vertical-align: middle;
+       text-align: middle;
+       left: -49%;
+       z-index:1;
+       color:yellow;
+       padding-right:85px;
+       font-size:12px;
+       background-color: #3D3D3D;
+    }
+    font.label {
+        font-size:17px;
+        text-shadow: 0px 1px 0px rgba(255,255,255,.3), 0px -1px 0px rgba(0,0,0,.7);
+    }
+    font.links {
+         font-size:12px;
+    }
+    span.blink-true {
+        animation-name: blinker-one;
+        animation-duration: 1.2s;
+        animation-timing-function: linear;
+        animation-iteration-count:infinite;
+        animation-direction: alternate;
+    }
+    @keyframes blinker-one {
+         0% { opacity: 0; }
+    }
+    span.blink-false {
+    }
+    div.toolstip {
+        position: relative;
+        display: inline-block;
+    }
+
+    div.toolstip .tooltiptext {
+      visibility: hidden;
+      width: 120px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px 0;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -60px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size:15px;
+    }
+
+    div.toolstip .tooltiptext::after {
+      content: "";
+      position: absolute;
+      top:  100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #555 transparent transparent transparent;
+    }
+
+    div.toolstip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+
+</style>
+
+<br>
+
+{{#each metrics}}
+
+    <div class=outer>
+
+        <div class=title_type>{{value}}</div>
+
+        {{#each buckets}}
+
+            <div class=inner>
+
+                <a href="{{metrics.8.value}}" target="_blank">
+                    <font class=label>{{value}}</font><br><br>
+                </a>
+
+                {{#compare metrics.2.value "None"}}
+
+                    <div class=toolstip>
+
+                        <span class=blink-{{metrics.5.raw}}>
+                            <b><font color={{metrics.1.raw}}> {{metrics.0.value}} </font></b>
+                        </span>
+
+                        {{#compare metrics.0.value "!=" "Running"}}
+
+                            <span class="tooltiptext">
+                                <font size=2>
+                                    {{#compare metrics.9.value ">" "0"}}
+                                        # un-ack: {{metrics.9.value}}<br>
+                                    {{/compare}}
+                                    {{#compare metrics.10.value ">" "0"}}
+                                        # un-cor: {{metrics.10.value}}
+                                    {{/compare}}
+                                </font>
+                            </span>
+
+                        {{/compare}}
+
+                    </div>
+
+                {{/compare}}
+
+                {{#compare metrics.2.value "!=" "None"}}
+
+                    <div class=toolstip>
+
+                        <del><font color=gray> {{metrics.0.value}}</font></del>
+                        <span class="tooltiptext">{{metrics.2.value}}</span>
+
+                    </div>
+
+                {{/compare}}
+
+                <br>
+
+                <font class=links>
+
+                    <a href="http://{{metrics.3.raw}}:8080/WebLink/main/service/{{metrics.4.raw}}?u=administrator&p=" target="_blank">Control</a> /
+
+                    <div class=toolstip>
+
+                        <a href="{{metrics.6.value}}" target="_blank">Logs</a>
+                        <span class="tooltiptext">{{metrics.7.value}}</span>
+
+                    </div>
+
+                </font>
+
+            </div>
+
+        {{/each}}
+
+    </div>
+
+{{/each}}
